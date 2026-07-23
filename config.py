@@ -14,7 +14,7 @@ SHORT_TUT = "https://t.me/How_to_Download_7x/26"
 
 # Bot Configuration
 SESSION = "detorbots"
-TOKEN = "add_you_bot_token:"
+TOKEN = ""
 API_ID = "37988924"
 API_HASH = "fccc55f248cf1739f6cf120d3e244561"
 WORKERS = 5
