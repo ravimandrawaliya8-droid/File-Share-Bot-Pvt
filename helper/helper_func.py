@@ -504,4 +504,3 @@ async def batch_auto_del_notification(bot_username, messages, delay_time, transf
             await notification_msg.edit_text(f"<b>Pʀᴇᴠɪᴏᴜs Mᴇssᴀɢᴇ ᴡᴀs Dᴇʟᴇᴛᴇᴅ</b>")
     except Exception as e:
         print(f"Error updating notification message: {e}")
-
