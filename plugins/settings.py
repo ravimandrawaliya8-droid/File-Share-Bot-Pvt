@@ -97,24 +97,42 @@ async def fsub(client, query):
         channel_list = []
         for channel_id, channel_data in client.fsub_dict.items():
             channel_name = channel_data[0] if channel_data and len(channel_data) > 0 else "Unknown"
-            request_status = "✓ ʀᴇѦᴜᴇsᴛ" if channel_data[2] else "✗ ʀᴇѦᴜᴇsᴛ"
+            request_status = "✓ ʀᴇǫᴜᴇsᴛ" if channel_data[2] else "✗ ʀᴇǫᴜᴇsᴛ"
             timer_status = f"ᴛɪᴍᴇʀ: {channel_data[3]}ᴍ" if channel_data[3] > 0 else "ᴛɪᴍᴇʀ: ∞"
             channel_list.append(f"• `{channel_name}` (`{channel_id}`) - {request_status}, {timer_status}")
         
         channels_display = "\n".join(channel_list)
     else:
         channels_display = "_ɴᴏ ꜰᴏʀᴄᴇ sᴜʙsᴄʀɪᴘᴛɪᴏɴ ᴄʜᴀɴɴᴇʟs ᴄᴏɴғɪɢᴜʀᴇᴅ_"
+
+    # Create a formatted list of bots
+    try:
+        bots = await client.mongodb.get_fsub_bots()
+    except Exception:
+        bots = {}
+
+    if bots:
+        bot_list = []
+        for bot_username, bot_link in bots.items():
+            bot_list.append(f"• `@{bot_username}`")
+        bots_display = "\n".join(bot_list)
+    else:
+        bots_display = "_ɴᴏ ꜰᴏʀᴄᴇ sᴜʙsᴄʀɪᴘᴛɪᴏɴ ʙᴏᴛs ᴄᴏɴғɪɢᴜʀᴇᴅ_"
     
     msg = f"""<blockquote>✦ ꜰᴏʀᴄᴇ sᴜʙsᴄʀɪᴘᴛɪᴏɴ sᴇᴛᴛɪɴɢs</blockquote>
 ›› **ᴄᴏɴғɪɢᴜʀᴇᴅ ᴄʜᴀɴɴᴇʟs:**
 {channels_display}
 
-__ᴜsᴇ ᴛʜᴇ ᴀᴘᴘʀᴏᴘʀɪᴀᴛᴇ ʙᴜᴛᴛᴏɴ ʙᴇʟᴏᴡ ᴛᴏ ᴀᴅᴅ ᴏʀ ʀᴇᴍᴏᴠᴇ ᴀ ꜰᴏʀᴄᴇ sᴜʙsᴄʀɪᴘᴛɪᴏɴ ᴄʜᴀɴɴᴇʟ ʙᴀsᴇᴅ ᴏɴ ʏᴏᴜʀ ɴᴇᴇᴅs!__
+›› **ᴄᴏɴғɪɢᴜʀᴇᴅ ʙᴏᴛs:**
+{bots_display}
+
+__ᴜsᴇ ᴛʜᴇ ᴀᴘᴘʀᴏᴘʀɪᴀᴛᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ᴛᴏ ᴀᴅᴅ ᴏʀ ʀᴇᴍᴏᴠᴇ ꜰᴏʀᴄᴇ sᴜʙ ᴄʜᴀɴɴᴇʟs & ʙᴏᴛs!__
 """
     reply_markup = InlineKeyboardMarkup([
         [InlineKeyboardButton('›› ᴀᴅᴅ ᴄʜᴀɴɴᴇʟ', 'add_fsub'), InlineKeyboardButton('›› ʀᴇᴍᴏᴠᴇ ᴄʜᴀɴɴᴇʟ', 'rm_fsub')],
-        [InlineKeyboardButton('‹ ʙᴀᴄᴋ', 'settings')]]
-    )
+        [InlineKeyboardButton('›› ᴀᴅᴅ ʙᴏᴛ', 'add_fsub_bot'), InlineKeyboardButton('›› ʀᴇᴍᴏᴠᴇ ʙᴏᴛ', 'rm_fsub_bot')],
+        [InlineKeyboardButton('‹ ʙᴀᴄᴋ', 'settings')]
+    ])
     await query.message.edit_text(msg, reply_markup=reply_markup)
     return
 
