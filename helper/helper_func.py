@@ -341,30 +341,30 @@ def force_sub(func):
 
             # Add button based on user status
             if status not in {ChatMemberStatus.MEMBER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER}:
-                # Check if user has already submitted request for request channels
                 if request and await client.mongodb.has_submitted_join_request(user_id, channel_id):
                     request_status = await client.mongodb.get_join_request_status(user_id, channel_id)
                     if request_status == "pending":
-                        # Don't add button if request is still pending
                         continue
-                    elif request_status == "approved":
-                        button_text = f"Join {channel_name}"
-                    else:
-                        button_text = f"Join {channel_name}"
-                else:
-                    button_text = f"Join {channel_name}"
                 
-                buttons.append(InlineKeyboardButton(button_text, url=channel_link))
+                # BUG FIX 1: Ensure channel_link is valid before adding to button
+                if channel_link and str(channel_link).startswith(('http://', 'https://')):
+                    buttons.append(InlineKeyboardButton(f"Join {channel_name}", url=channel_link))
 
         # =======================================================
-        # NEW UPDATE: DYNAMIC BOT BUTTONS FROM DATABASE
-        # Yahan hardcoded link hata kar database wala connection laga diya gaya hai
+        # NEW UPDATE: DYNAMIC BOT BUTTONS FROM DATABASE (WITH URL FAIL-SAFE)
         # =======================================================
         try:
             bots = await client.mongodb.get_fsub_bots()
             if bots:
                 for bot_username, bot_link in bots.items():
-                    buttons.append(InlineKeyboardButton(f"🎁 Start @{bot_username}", url=bot_link))
+                    # BUG FIX 2: Check and fix formatting of the bot_link to avoid BUTTON_URL_INVALID
+                    if bot_link and str(bot_link).startswith(('http://', 'https://')):
+                        valid_bot_url = bot_link
+                    else:
+                        clean_username = bot_username.replace("@", "")
+                        valid_bot_url = f"https://t.me/{clean_username}"
+                        
+                    buttons.append(InlineKeyboardButton(f"🎁 Start @{bot_username}", url=valid_bot_url))
         except Exception as e:
             client.LOGGER(__name__, client.name).warning(f"Error fetching fsub bots: {e}")
         # =======================================================
@@ -372,24 +372,26 @@ def force_sub(func):
         # Add "Try Again" button if needed
         from_link = message.text.split(" ")
         if len(from_link) > 1:
-            try_again_link = f"https://t.me/{client.username}/?start={from_link[1]}"
+            # BUG FIX 3: Removed extra slash after client.username to ensure valid URL
+            try_again_link = f"https://t.me/{client.username}?start={from_link[1]}"
             buttons.append(InlineKeyboardButton("🔄 Try Again", url=try_again_link))
 
         # Organize buttons in rows of 1 for better readability
-        buttons_markup = InlineKeyboardMarkup([[button] for button in buttons])
-        buttons_markup = None if not buttons else buttons_markup
+        buttons_markup = InlineKeyboardMarkup([[button] for button in buttons]) if buttons else None
 
         # Edit message with status update and buttons
-        try:
-            await msg.edit_text(text=channels_message, reply_markup=buttons_markup)
-        except Exception as e:
-            client.LOGGER(__name__, client.name).warning(f"Error updating force sub message: {e}")
-            # Fallback: send new message if edit fails
+        if buttons_markup:
             try:
-                await msg.delete()
-                await message.reply(text=channels_message, reply_markup=buttons_markup)
-            except Exception:
-                pass
+                await msg.edit_text(text=channels_message, reply_markup=buttons_markup)
+            except Exception as e:
+                client.LOGGER(__name__, client.name).warning(f"Error updating force sub message: {e}")
+                try:
+                    await msg.delete()
+                    await message.reply(text=channels_message, reply_markup=buttons_markup)
+                except Exception:
+                    pass
+        else:
+            await msg.edit_text(text=channels_message)
 
     return wrapper
 
