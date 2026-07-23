@@ -19,7 +19,7 @@ API_ID = "37988924"
 API_HASH = "fccc55f248cf1739f6cf120d3e244561"
 WORKERS = 5
 
-DB_URI = "mondo_db_add_lro"
+DB_URI = ""
 DB_NAME = "testbot"
 
 FSUBS = [[-1003726486971, True, 10]] # Force Subscription Channels [channel_id, request_enabled, timer_in_minutes]
