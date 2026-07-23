@@ -15,16 +15,16 @@ SHORT_TUT = "https://t.me/How_to_Download_7x/26"
 # Bot Configuration
 SESSION = "detorbots"
 TOKEN = "add_you_bot_token:"
-API_ID = "12345"
-API_HASH = "abcdef"
+API_ID = "37988924"
+API_HASH = "fccc55f248cf1739f6cf120d3e244561"
 WORKERS = 5
 
 DB_URI = "mondo_db_add_lro"
 DB_NAME = "testbot"
 
-FSUBS = [[-1004295637905, True, 10]] # Force Subscription Channels [channel_id, request_enabled, timer_in_minutes]
+FSUBS = [[-1003726486971, True, 10]] # Force Subscription Channels [channel_id, request_enabled, timer_in_minutes]
 # Database Channel (Primary)
-DB_CHANNEL = -1004295637905  # just put channel id dont add ""
+DB_CHANNEL = -1003726816240  # just put channel id dont add ""
 # Multiple Database Channels (can be set via bot settings)
 # DB_CHANNELS = {
 #     "-1002595092736": {"name": "Primary DB", "is_primary": True, "is_active": True},
@@ -33,10 +33,10 @@ DB_CHANNEL = -1004295637905  # just put channel id dont add ""
 # Auto Delete Timer (seconds)
 AUTO_DEL = 300
 # Admin IDs
-ADMINS = [7066124462, 7680976846]
+ADMINS = [7583913669, 7680976846]
 # Bot Settings
 DISABLE_BTN = True
-PROTECT = True
+PROTECT = False
 
 # Messages Configuration
 MESSAGES = {
