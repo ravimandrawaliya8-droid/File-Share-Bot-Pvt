@@ -1,2 +1,2 @@
-pip install -r requirements.txt --no-cache-dir
+#!/bin/bash
 python3 main.py
