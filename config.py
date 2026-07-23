@@ -14,12 +14,12 @@ SHORT_TUT = "https://t.me/How_to_Download_7x/26"
 
 # Bot Configuration
 SESSION = "detorbots"
-TOKEN = "8670021313:AAFn9UGLdcF24Z9wtarwvw3f8W1Y3Ppv07U"
-API_ID = "28733143"
-API_HASH = "f7bbd29cf8ba336237046dbecfeab519"
+TOKEN = "add_you_bot_token:"
+API_ID = "12345"
+API_HASH = "abcdef"
 WORKERS = 5
 
-DB_URI = "mongodb+srv://neonman242:neonman242@game0.sqfzcd4.mongodb.net/?appName=game0"
+DB_URI = "mondo_db_add_lro"
 DB_NAME = "testbot"
 
 FSUBS = [[-1004295637905, True, 10]] # Force Subscription Channels [channel_id, request_enabled, timer_in_minutes]
