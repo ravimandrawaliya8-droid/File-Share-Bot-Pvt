@@ -36,7 +36,7 @@ async def get_messages(client, message_ids):
             # Use new multi-DB channel function
             msgs = await get_messages_from_db_channels(client, temb_ids)
         except FloodWait as e:
-            await asyncio.sleep(e.x)
+            await asyncio.sleep(e.value)
             msgs = await get_messages_from_db_channels(client, temb_ids)
         except:
             pass
@@ -152,7 +152,7 @@ async def get_messages_from_db_channels(client, temb_ids):
                 continue
         
     except FloodWait as e:
-        await asyncio.sleep(e.x)
+        await asyncio.sleep(e.value)
         # Retry with the same function
         return await get_messages_from_db_channels(client, temb_ids)
     except Exception as e:
@@ -356,20 +356,18 @@ def force_sub(func):
                 
                 buttons.append(InlineKeyboardButton(button_text, url=channel_link))
 
-
         # =======================================================
-        # NEW UPDATE: ADD REFERRAL BOT BUTTON HERE
-        # Aap apna dusre bot ka link aur button ka text yaha set kare
+        # NEW UPDATE: DYNAMIC BOT BUTTONS FROM DATABASE
+        # Yahan hardcoded link hata kar database wala connection laga diya gaya hai
         # =======================================================
-        
-        REFERRAL_BOT_LINK = getattr(client, "referral_link", "https://t.me/AapkaDusraBot_bot?start=ReferralCode")
-        REFERRAL_BOT_NAME = getattr(client, "referral_name", "🎁 Start Premium Bot")
-        
-        if REFERRAL_BOT_LINK:
-            buttons.append(InlineKeyboardButton(REFERRAL_BOT_NAME, url=REFERRAL_BOT_LINK))
-
+        try:
+            bots = await client.mongodb.get_fsub_bots()
+            if bots:
+                for bot_username, bot_link in bots.items():
+                    buttons.append(InlineKeyboardButton(f"🎁 Start @{bot_username}", url=bot_link))
+        except Exception as e:
+            client.LOGGER(__name__, client.name).warning(f"Error fetching fsub bots: {e}")
         # =======================================================
-
 
         # Add "Try Again" button if needed
         from_link = message.text.split(" ")
